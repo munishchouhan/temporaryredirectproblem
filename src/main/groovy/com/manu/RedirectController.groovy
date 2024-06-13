@@ -15,8 +15,7 @@ import java.util.function.Consumer
 @Controller("/")
 class RedirectController {
 
-    @Get("/redirect/pass")
-    HttpResponse redirectPass() {
+    MutableHttpResponse createResponse() {
         final override = Map.of(
                 'Location', 'http://foo.com',
                 'Content-Length', '0',
@@ -26,20 +25,17 @@ class RedirectController {
                 .headers(toMutableHeaders(override))
     }
 
-    @Get("/redirect/fail")
-    CompletableFuture<MutableHttpResponse<?>> redirectFail() {
-        final override = Map.of(
-                'Location', 'http://foo.com',
-                'Content-Length', '0',
-                'Connection', 'close' )
-        def ret =  HttpResponse
-                .status(HttpStatus.valueOf(307))
-                .headers(toMutableHeaders(override))
-
-        CompletableFuture.completedFuture(ret)
+    @Get("/redirect/pass")
+    MutableHttpResponse redirectPass() {
+        createResponse()
     }
 
-    static protected Consumer<MutableHttpHeaders> toMutableHeaders(Map<String,String> override=Collections.emptyMap()) {
+    @Get("/redirect/fail")
+    CompletableFuture<MutableHttpResponse> redirectFail() {
+        CompletableFuture.completedFuture(createResponse())
+    }
+
+    static protected Consumer<MutableHttpHeaders> toMutableHeaders(Map<String,String> override) {
         new Consumer<MutableHttpHeaders>() {
             @Override
             void accept(MutableHttpHeaders mutableHttpHeaders) {
