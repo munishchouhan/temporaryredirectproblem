@@ -18,36 +18,31 @@ class RedirectController {
     @Get("/redirect/pass")
     HttpResponse redirectPass() {
         final override = Map.of(
-                'Location', 'http://foo.com',  // <-- the location can be relative to the origin host, override it to always return a fully qualified URI
-                'Content-Length', '0',  // <-- make sure to set content length to zero, some services return some content even with the redirect header that's discarded by this response
-                'Connection', 'close' ) // <-- make sure to return connection: close header otherwise docker hangs
+                'Location', 'http://foo.com',
+                'Content-Length', '0',
+                'Connection', 'close' )
         return HttpResponse
                 .status(HttpStatus.valueOf(307))
-                .headers(toMutableHeaders([:], override))
+                .headers(toMutableHeaders(override))
     }
 
     @Get("/redirect/fail")
     CompletableFuture<MutableHttpResponse<?>> redirectFail() {
         final override = Map.of(
-                'Location', 'http://foo.com',  // <-- the location can be relative to the origin host, override it to always return a fully qualified URI
-                'Content-Length', '0',  // <-- make sure to set content length to zero, some services return some content even with the redirect header that's discarded by this response
-                'Connection', 'close' ) // <-- make sure to return connection: close header otherwise docker hangs
+                'Location', 'http://foo.com',
+                'Content-Length', '0',
+                'Connection', 'close' )
         def ret =  HttpResponse
                 .status(HttpStatus.valueOf(307))
-                .headers(toMutableHeaders([:], override))
+                .headers(toMutableHeaders(override))
 
         CompletableFuture.completedFuture(ret)
     }
 
-    static protected Consumer<MutableHttpHeaders> toMutableHeaders(Map<String,List<String>> headers, Map<String,String> override=Collections.emptyMap()) {
+    static protected Consumer<MutableHttpHeaders> toMutableHeaders(Map<String,String> override=Collections.emptyMap()) {
         new Consumer<MutableHttpHeaders>() {
             @Override
             void accept(MutableHttpHeaders mutableHttpHeaders) {
-                for( Map.Entry<String,List<String>> entry : headers ) {
-                    for( String value : entry.value )
-                        mutableHttpHeaders.add(entry.key, value)
-                }
-                // override headers with specified value
                 for( Map.Entry<String,String> entry : override ) {
                     mutableHttpHeaders.putAt(entry.key, entry.value)
                 }
