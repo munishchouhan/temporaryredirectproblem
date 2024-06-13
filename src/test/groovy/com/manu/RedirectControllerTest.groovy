@@ -14,9 +14,9 @@ class RedirectControllerTest extends Specification {
     @Client("/")
     HttpClient client
 
-    def 'failing test: should redirect'() {
+    def 'Successful test: should redirect'() {
         when:
-        def request = HttpRequest.GET("/redirect/fail")
+        def request = HttpRequest.GET("/redirect/pass")
         def response = client.toBlocking().exchange(request)
 
         then:
@@ -24,9 +24,9 @@ class RedirectControllerTest extends Specification {
         response.headers.get("Location") == "http://foo.com"
     }
 
-    def 'Successful test: should redirect'() {
+    def 'failing test: should redirect'() {
         when:
-        def request = HttpRequest.GET("/redirect/pass")
+        def request = HttpRequest.GET("/redirect/fail")
         def response = client.toBlocking().exchange(request)
 
         then:
