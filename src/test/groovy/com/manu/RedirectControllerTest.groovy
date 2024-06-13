@@ -21,7 +21,7 @@ class RedirectControllerTest extends Specification {
 
         then:
         response.status.code == 307
-        response.headers.get("Location") == "https://foo.com"
+        response.headers.get("Location") == "http://foo.com"
     }
 
     def 'Successful test: should redirect'() {
@@ -31,6 +31,6 @@ class RedirectControllerTest extends Specification {
 
         then:
         response.status.code == 307
-        response.headers.get("Location") == "https://foo.com"
+        response.headers.get("Location") == "http://foo.com"
     }
 }
